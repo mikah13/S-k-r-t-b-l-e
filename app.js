@@ -3,10 +3,10 @@ var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
 var app = express();
-const PORT = process.env.PORT || 3000;
+
 var server = http.Server(app);
 var io = socketIO(server);
-app.set('port', 5000);
+const PORT = process.env.PORT || 3000;
 app.use('/static', express.static(__dirname + '/static'));
 // Routing
 app.get('/', function(request, response) {
@@ -30,6 +30,6 @@ io.on('connection', function(socket) {
 
 });
 
-app.listen(PORT, () => {
-  console.log(`Server is listening on port ${PORT}`);
+server.listen(PORT, function() {
+    
 });

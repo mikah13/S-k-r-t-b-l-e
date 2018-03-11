@@ -36,6 +36,7 @@ $(function() {
     });
 
     function redraw() {
+
         context.clearRect(0, 0, context.canvas.width, context.canvas.height); // Clears the canvas
         context.strokeStyle = "#df4b26";
         context.lineJoin = "round";
@@ -64,7 +65,6 @@ $(function() {
     socket.on('chat message', function(msg) {
         $('#messages').append($('<li>').text(msg));
     });
-
 
 
     socket.on('disconnect', function(msg) {
