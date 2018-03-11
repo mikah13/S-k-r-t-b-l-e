@@ -17,19 +17,40 @@ app.get('/', function(request, response) {
 var players = {};
 
 io.on('connection', function(socket) {
+    socket.on('new player', function() {
 
+        players[socket.id] = {
+            clickX: new Array(),
+            clickY: new Array(),
+            clickDrag: new Array()
+        }
+        let msg = `Player ${socket.id} has joined`;
+        io.emit('connect message', msg);
+    })
+    socket.on('add coord', function(x, y, z) {
+        players[socket.id].clickX.push(x);
+        players[socket.id].clickY.push(y);
+        players[socket.id].clickDrag.push(z);
+
+
+    })
+    socket.on('redraw',function(){
+        io.emit('draw',players)
+    })
     socket.on('disconnect', function() {
         delete players[socket.id];
         let msg = `Player ${socket.id} has left`;
-        io.emit('disconnect',msg);
+        io.emit('disconnect', msg);
+
     });
 
     socket.on('chat message', function(msg) {
         io.emit('chat message', msg);
     });
 
+    setInterval(function() {
+        io.sockets.emit('state');
+    }, 1000 / 60);
 });
 
-server.listen(PORT, function() {
-    
-});
+server.listen(PORT, function() {});
