@@ -3,6 +3,7 @@ var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
 var app = express();
+const PORT = process.env.PORT || 3000;
 var server = http.Server(app);
 var io = socketIO(server);
 app.set('port', 5000);
@@ -29,6 +30,6 @@ io.on('connection', function(socket) {
 
 });
 
-server.listen(5000, function() {
-    console.log('Starting server on port 5000');
+app.listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
 });
