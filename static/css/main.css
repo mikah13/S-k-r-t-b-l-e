@@ -5,10 +5,12 @@
 }
 
 body {
+    padding: 5px 5px 5px 5px;
     font: 13px Helvetica, Arial;
 }
 
 .canvas {
+    display: inline-block;
     float: left;
     width: 60vw;
     height: 90vh;
@@ -22,6 +24,8 @@ canvas {
 }
 
 .chat {
+    display: inline-block;
+
     float: right;
     width: 40vw;
 }
@@ -60,4 +64,51 @@ form button {
 
 #messages li:nth-child(odd) {
     background: #eee;
+}
+
+.current-color {
+    border: .5px solid black;
+    width: 50px;
+    height: 50px;
+    background: black;
+    display: inline-block;
+}
+.color-board ,.color-cell,.brush,.eraser,.xsmall,.small,.medium,.large,.clear{
+    display: inline-block;
+}
+.color-board {
+
+    width: 275px;
+}
+
+.color-cell {
+
+    width: 25px;
+    height: 25px;
+}
+
+#clear{
+    height: 50px;
+    width: 50px;
+}
+
+#xsmall,#small,#medium,#large{
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: black;
+}
+
+#small{
+    width: 15px;
+    height: 15px;
+}
+
+#medium{
+    width: 20px;
+    height: 20px;
+}
+#large{
+    width: 25px;
+    height: 25px;
 }
