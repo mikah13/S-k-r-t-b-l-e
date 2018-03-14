@@ -7,6 +7,7 @@ $(function() {
     context.lineWidth = 5;
     let curColor = "black";
     let prevColor;
+    let curLineWidth = 5;
     let paint;
     const COLOR_ARRAY = [
         '#FFFFFF',
@@ -34,7 +35,6 @@ $(function() {
     ]
     COLOR_ARRAY.forEach(el => {
         $(".color-board").append(`<button class="color-cell" style="background:${el}"></button>`)
-
     })
     $(".color-cell").on('click', function(el) {
         curColor = $(this).css('background-color');
@@ -46,29 +46,29 @@ $(function() {
     $("#eraser").on('click', function() {
         prevColor = curColor;
         curColor = 'white';
-
     })
     $("#xsmall").on('click', function() {
-        context.lineWidth = 5;
+        curLineWidth = 5;
     })
     $("#small").on('click', function() {
-        context.lineWidth = 10;
+        curLineWidth = 10;
     })
     $("#medium").on('click', function() {
-        context.lineWidth = 20;
+        curLineWidth = 20;
     })
     $("#large").on('click', function() {
-        context.lineWidth = 25;
+        curLineWidth = 25;
     })
-
     $("#clear").on('click', function() {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-
+        socket.emit('reset');
     })
+    socket.on('reset all', function() {
 
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+    })
     socket.emit('new player');
     function addClick(x, y, dragging) {
-        socket.emit('add coord', x, y, dragging, curColor);
+        socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
     }
     $('#canvas').mousedown(function(e) {
         context.beginPath();
@@ -90,11 +90,7 @@ $(function() {
     $('#canvas').mouseup(function(e) {
         paint = false;
     });
-    $('form').submit(function() {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
-        return false;
-    });
+
     $("#next-turn").on('click', function() {
         $("#word").text(word);
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -116,15 +112,21 @@ $(function() {
                 }
                 context.lineTo(players[player].clickX[i], players[player].clickY[i]);
                 context.closePath();
+                context.lineWidth = players[player].lineWidth[i];
                 context.strokeStyle = players[player].clickColor[i];
                 context.stroke();
             }
-
         }
     })
 
+    // Notification and chat
+
+    $('form').submit(function() {
+        socket.emit('chat message', $('#m').val());
+        $('#m').val('');
+        return false;
+    });
     socket.on('chat message', function(msg) {
-        console.log(msg);
         $('#messages').append($('<li>').text(msg));
     });
 

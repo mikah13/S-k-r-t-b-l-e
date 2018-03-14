@@ -13,6 +13,7 @@ app.get('/', function(request, response) {
     response.sendFile(path.join(__dirname, 'index.html'));
 });
 
+
 var words = [
     "ability",
     "achieve",
@@ -810,6 +811,7 @@ io.on('connection', function(socket) {
             clickY: new Array(),
             clickDrag: new Array(),
             clickColor: new Array(),
+            lineWidth:new Array(),
             id: number,
             word: ''
         }
@@ -828,6 +830,8 @@ io.on('connection', function(socket) {
         players[socket.id].clickY = new Array();
         players[socket.id].clickDrag = new Array();
         players[socket.id].clickColor = new Array();
+        players[socket.id].lineWidth = new Array();
+
         players[socket.id].word = '';
         turn++;
         if (turn >= number) {
@@ -841,19 +845,27 @@ io.on('connection', function(socket) {
         }
 
     })
-    socket.on('add coord', function(x, y, z, t) {
+    socket.on('add coord', function(x, y, z, t,u) {
         let player = players[socket.id];
         if (player.id === turn) {
             player.clickX.push(x);
             player.clickY.push(y);
             player.clickDrag.push(z);
             player.clickColor.push(t);
+            player.lineWidth.push(u);
         }
 
     })
     socket.on('redraw', function() {
-
         io.emit('draw', players)
+    })
+    socket.on('reset',function(){
+        players[socket.id].clickX = new Array();
+        players[socket.id].clickY = new Array();
+        players[socket.id].clickDrag = new Array();
+        players[socket.id].clickColor = new Array();
+        players[socket.id].lineWidth = new Array();
+        io.emit('reset all');
     })
     socket.on('disconnect', function() {
         for (let prop in players) {

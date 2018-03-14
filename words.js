@@ -1,4 +1,4 @@
-var words = [
+ar words = [
     "ability",
     "achieve",
     "acquire",
@@ -785,4 +785,3 @@ var words = [
     "zealots",
     "zealous"
 ];
-module.exports={words}
