@@ -66,7 +66,7 @@ $(function() {
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     })
-    socket.emit('new player');
+        socket.emit('new player');
     function addClick(x, y, dragging) {
         socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
     }
@@ -94,8 +94,11 @@ $(function() {
     $("#next-turn").on('click', function() {
         $("#word").text(word);
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-
         socket.emit('next-turn');
+    })
+    socket.on('clear canvas',function(){
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+
     })
     socket.on('show word', function(word) {
         $("#word").text(word);

@@ -5,14 +5,16 @@
 }
 
 body {
+    overflow-y: hidden;
+    background-image: url('../images/background.png');
     padding: 5px 5px 5px 5px;
     font: 13px Helvetica, Arial;
 }
 
 .canvas {
-    display: inline-block;
+    display: inline;
     float: left;
-    width: 60vw;
+    width: 55vw;
     height: 90vh;
     margin-top: 5vh;
 }
@@ -24,8 +26,9 @@ canvas {
 }
 
 .chat {
-    display: inline-block;
-
+    overflow-y: scroll;
+    height: 100vh;
+    display: inline;
     float: right;
     width: 40vw;
 }
@@ -112,3 +115,6 @@ form button {
     width: 25px;
     height: 25px;
 }
+ #messages{
+     background-color: white;
+ }

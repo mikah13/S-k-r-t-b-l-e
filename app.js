@@ -805,6 +805,7 @@ var players = {};
 var number = 0;
 var turn = 0;
 io.on('connection', function(socket) {
+
     socket.on('new player', function() {
         players[socket.id] = {
             clickX: new Array(),
@@ -831,18 +832,12 @@ io.on('connection', function(socket) {
         players[socket.id].clickDrag = new Array();
         players[socket.id].clickColor = new Array();
         players[socket.id].lineWidth = new Array();
-
         players[socket.id].word = '';
         turn++;
         if (turn >= number) {
             turn = 0;
         }
-        for (let prop in players) {
-            if (players[prop].id === turn) {
-                players[prop].word = words[Math.floor(Math.random() * words.length)];
-                io.emit('show word', players[prop].word);
-            }
-        }
+        io.emit('clear canvas')
 
     })
     socket.on('add coord', function(x, y, z, t,u) {
