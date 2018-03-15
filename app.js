@@ -1,20 +1,27 @@
-var express = require('express');
-var http = require('http');
-var path = require('path');
-var socketIO = require('socket.io');
-var app = express();
+let express = require('express');
+let http = require('http');
+let path = require('path');
+let socketIO = require('socket.io');
+let app = express();
 
-var server = http.Server(app);
-var io = socketIO(server);
+let server = http.Server(app);
+let io = socketIO(server);
 const PORT = process.env.PORT || 3000;
 app.use('/static', express.static(__dirname + '/static'));
 // Routing
 app.get('/', function(request, response) {
-    response.sendFile(path.join(__dirname, 'index.html'));
+    response.sendFile(path.join(__dirname, '/public/index.html'));
 });
-
-
-var words = [
+function getId(obj, turn) {
+    let target;
+    for (let val in obj) {
+        if (obj[val].id === turn) {
+            target = val;
+        }
+    }
+    return target;
+}
+let words = [
     "ability",
     "achieve",
     "acquire",
@@ -746,9 +753,9 @@ var words = [
     "useless",
     "usually",
     "utensil",
-    "variety",
-    "various",
-    "varying",
+    "letiety",
+    "letious",
+    "letying",
     "vassals",
     "veggies",
     "venture",
@@ -801,28 +808,30 @@ var words = [
     "zealots",
     "zealous"
 ];
-var players = {};
-var number = 0;
-var turn = 0;
+let players = {};
+let number = 0;
+let turn = 0;
+let curWord = words[Math.floor(Math.random() * words.length)];
 io.on('connection', function(socket) {
-
     socket.on('new player', function() {
         players[socket.id] = {
+            name: words[Math.floor(Math.random() * words.length)],
             clickX: new Array(),
             clickY: new Array(),
             clickDrag: new Array(),
             clickColor: new Array(),
-            lineWidth:new Array(),
-            id: number,
-            word: ''
+            lineWidth: new Array(),
+            id: number
         }
-        if (players[socket.id].id === 0) {
-            players[socket.id].word = words[Math.floor(Math.random() * words.length)];
-            io.emit('show word', players[socket.id].word);
-        }
+
         number++;
+        io.emit('show word', {
+            word: curWord,
+            player: getId(players, turn)
+        });
+
         io.emit('draw', players);
-        let msg = `Player ${socket.id} has joined`;
+        let msg = `Player ${players[socket.id].name} has joined`;
         io.emit('connect message', msg);
 
     })
@@ -837,10 +846,15 @@ io.on('connection', function(socket) {
         if (turn >= number) {
             turn = 0;
         }
-        io.emit('clear canvas')
+        io.emit('clear canvas');
+        curWord = words[Math.floor(Math.random() * words.length)];
+        io.emit('show word', {
+            word: curWord,
+            player: getId(players, turn)
+        });
 
     })
-    socket.on('add coord', function(x, y, z, t,u) {
+    socket.on('add coord', function(x, y, z, t, u) {
         let player = players[socket.id];
         if (player.id === turn) {
             player.clickX.push(x);
@@ -854,7 +868,7 @@ io.on('connection', function(socket) {
     socket.on('redraw', function() {
         io.emit('draw', players)
     })
-    socket.on('reset',function(){
+    socket.on('reset', function() {
         players[socket.id].clickX = new Array();
         players[socket.id].clickY = new Array();
         players[socket.id].clickDrag = new Array();
@@ -863,24 +877,36 @@ io.on('connection', function(socket) {
         io.emit('reset all');
     })
     socket.on('disconnect', function() {
-        for (let prop in players) {
-            if (players[prop].id > players[socket.id].id) {
-                players[prop].id--;
+        if (players[socket.id] !== undefined) {
+            if (getId(players, turn) === socket.id) {
+                io.emit('reset all');
+                curWord = words[Math.floor(Math.random() * words.length)];
+                io.emit('show word', {
+                    word: curWord,
+                    player: getId(players, turn)
+                });
             }
-        }
-        delete players[socket.id];
-        number--;
-        if (number < 0) {
-            number = 0;
-        }
-        let msg = `Player ${socket.id} has left`;
-        io.emit('disconnect', msg);
+            for (let prop in players) {
+                if (players[prop].id > players[socket.id].id) {
+                    players[prop].id--;
+                }
+            }
+            let msg = `Player ${players[socket.id].name} has left`;
+            io.emit('disconnect', msg);
+            delete players[socket.id];
+            number--;
+            if (number < 0) {
+                number = 0;
+            }
 
+        }
     });
 
     socket.on('chat message', function(msg) {
+        if (msg.trim() !== '') {
 
-        io.emit('chat message', msg);
+            io.emit('chat message', players[socket.id].name + ": " + msg);
+        }
     });
 
 });

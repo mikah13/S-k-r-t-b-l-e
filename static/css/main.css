@@ -20,13 +20,17 @@ body {
 }
 
 canvas {
+    background: white;
+    width: 55vw;
+    height: 70vh;
     /* width: 100%;
     height: 100%; */
     border: 5px solid black;
 }
 
 .chat {
-    overflow-y: scroll;
+    background: white;
+         overflow-y: auto;
     height: 100vh;
     display: inline;
     float: right;
@@ -56,6 +60,7 @@ form button {
 }
 
 #messages {
+         background-color: white;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -115,6 +120,10 @@ form button {
     width: 25px;
     height: 25px;
 }
- #messages{
-     background-color: white;
- }
+.word{
+    padding-top: 10px;
+    font-size: 20px;
+    text-align: center;
+    background: white;
+    height: 40px;
+}

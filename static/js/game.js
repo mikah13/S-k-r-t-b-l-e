@@ -1,8 +1,11 @@
 $(function() {
     let socket = io();
     let canvas = document.getElementById('canvas');
-    canvas.width = 800;
-    canvas.height = 500;
+    var w = canvas.width = canvas.clientWidth;
+    var h = canvas.height = canvas.clientHeight;
+    var size = (w > h)
+        ? h
+        : w;
     let context = canvas.getContext('2d');
     context.lineWidth = 5;
     let curColor = "black";
@@ -54,7 +57,7 @@ $(function() {
         curLineWidth = 10;
     })
     $("#medium").on('click', function() {
-        curLineWidth = 20;
+        curLineWidth = 18;
     })
     $("#large").on('click', function() {
         curLineWidth = 25;
@@ -66,7 +69,7 @@ $(function() {
 
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     })
-        socket.emit('new player');
+    socket.emit('new player');
     function addClick(x, y, dragging) {
         socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
     }
@@ -96,12 +99,21 @@ $(function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         socket.emit('next-turn');
     })
-    socket.on('clear canvas',function(){
+    socket.on('clear canvas', function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
     })
-    socket.on('show word', function(word) {
-        $("#word").text(word);
+    socket.on('show word', function(args) {
+console.log(socket.id);
+console.log(args.player);
+
+        if(socket.id === args.player){
+
+            $("#word").text(args.word);
+        }else{
+            let hidden = new Array(args.word.length).fill('_').join('');
+            $("#word").text(hidden);
+        }
     })
     socket.on('draw', function(players) {
         for (let player in players) {
@@ -130,9 +142,17 @@ $(function() {
         return false;
     });
     socket.on('chat message', function(msg) {
-        $('#messages').append($('<li>').text(msg));
+        let chat = document.getElementById("chat");
+        let shouldScroll = chat.scrollTop + chat.clientHeight === chat.scrollHeight;
+        $('#messages').append($('<li>').append(msg));
+        if (!shouldScroll) {
+            scrollToBottom();
+        }
     });
-
+    function scrollToBottom() {
+        let chat = document.getElementById("chat");
+        chat.scrollTop = chat.scrollHeight;
+    }
     socket.on('disconnect', function(msg) {
         $('#messages').append($('<li>').text(msg));
     })
