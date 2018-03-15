@@ -21,6 +21,14 @@ function getId(obj, turn) {
     }
     return target;
 }
+function getPlayersLength(obj){
+    let count = 0;
+    for(let val in obj){
+        count++;
+    }
+    return count;
+}
+
 let words = [
     "ability",
     "achieve",
@@ -852,18 +860,41 @@ io.on('connection', function(socket) {
             word: curWord,
             player: getId(players, turn)
         });
+        let count = 0;
+        var lastUpdateTime = (new Date()).getTime();
+        let x = setInterval(function() {
+            io.emit('countdown', count);
+            count++;
+            var currentTime = (new Date()).getTime();
+            var timeDifference = currentTime - lastUpdateTime;
+            if (count === 5) {
+                clearInterval(x);
+                if(getPlayersLength(players)>1){
+                    socket.emit('next');
+                }else{
+                    app.get('/done', function(request, response) {
+                        response.sendFile(path.join(__dirname, '/public/gameover.html'));
+                    });
+                    socket.emit('game-over');
+                }
+
+            }
+  lastUpdateTime = currentTime;
+}, 1000 );
+
 
     })
     socket.on('add coord', function(x, y, z, t, u) {
-        let player = players[socket.id];
-        if (player.id === turn) {
-            player.clickX.push(x);
-            player.clickY.push(y);
-            player.clickDrag.push(z);
-            player.clickColor.push(t);
-            player.lineWidth.push(u);
+        if (players[socket.id] !== undefined) {
+            let player = players[socket.id];
+            if (player.id === turn) {
+                player.clickX.push(x);
+                player.clickY.push(y);
+                player.clickDrag.push(z);
+                player.clickColor.push(t);
+                player.lineWidth.push(u);
+            }
         }
-
     })
     socket.on('redraw', function() {
         io.emit('draw', players)

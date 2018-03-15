@@ -99,13 +99,15 @@ $(function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         socket.emit('next-turn');
     })
+    socket.on('next',function(){
+        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
+        socket.emit('next-turn');
+    })
     socket.on('clear canvas', function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
     })
     socket.on('show word', function(args) {
-console.log(socket.id);
-console.log(args.player);
 
         if(socket.id === args.player){
 
@@ -158,6 +160,10 @@ console.log(args.player);
     })
     socket.on('connect message', function(msg) {
         $('#messages').append($('<li>').text(msg));
+    }).on('countdown',function(a){
+        console.log(a);
+    }).on('game-over',function(){
+        window.location.href='/done';
     })
 
 });
