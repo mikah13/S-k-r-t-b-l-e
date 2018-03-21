@@ -12,6 +12,7 @@ $(function() {
     let prevColor;
     let curLineWidth = 5;
     let paint;
+    let mouseDown = 0;
     const COLOR_ARRAY = [
         '#FFFFFF',
         '#B1B2B8',
@@ -65,20 +66,33 @@ $(function() {
     $("#clear").on('click', function() {
         socket.emit('reset');
     })
+    socket.on('add new player', function(players) {
+        let text = '<ul>';
+        for (let val in players) {
+            text += `<li>${players[val].name}</li>`;
+        }
+        $(".leaderboard").html(text + '</ul>');
+    })
     socket.on('reset all', function() {
-
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     })
     socket.emit('new player');
     function addClick(x, y, dragging) {
         socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
     }
+    $('#canvas').mouseout(function(e) {
+
+        paint = mouseDown === 1
+            ? true
+            : false;
+    })
     $('#canvas').mousedown(function(e) {
+        ++mouseDown;
         context.beginPath();
         let mouseX = e.pageX - this.offsetLeft;
         let mouseY = e.pageY - this.offsetTop;
         paint = true;
-        addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+        addClick(mouseX, mouseY);
         socket.emit('redraw');
     });
     $('#canvas').mousemove(function(e) {
@@ -87,21 +101,17 @@ $(function() {
             socket.emit('redraw');
         }
     });
-    // $('#canvas').mouseleave(function(e) {
-    //     paint = false;
-    // });
-    $('#canvas').mouseup(function(e) {
+
+    $('body').mouseup(function(e) {
+        --mouseDown;
         paint = false;
     });
-
-    $("#next-turn").on('click', function() {
-        $("#word").text(word);
+    
+    socket.on('next', function(id) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        socket.emit('next-turn');
-    })
-    socket.on('next',function(){
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
-        socket.emit('next-turn');
+        if (socket.id === id) {
+            socket.emit('next-turn');
+        }
     })
     socket.on('clear canvas', function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
@@ -109,10 +119,10 @@ $(function() {
     })
     socket.on('show word', function(args) {
 
-        if(socket.id === args.player){
+        if (socket.id === args.player) {
 
             $("#word").text(args.word);
-        }else{
+        } else {
             let hidden = new Array(args.word.length).fill('_').join('');
             $("#word").text(hidden);
         }
@@ -139,13 +149,14 @@ $(function() {
     // Notification and chat
 
     $('form').submit(function() {
-        socket.emit('chat message', $('#m').val());
-        $('#m').val('');
+        socket.emit('chat message', $('#inputChat').val());
+        $('#inputChat').val('');
         return false;
     });
     socket.on('chat message', function(msg) {
         let chat = document.getElementById("chat");
         let shouldScroll = chat.scrollTop + chat.clientHeight === chat.scrollHeight;
+
         $('#messages').append($('<li>').append(msg));
         if (!shouldScroll) {
             scrollToBottom();
@@ -158,12 +169,15 @@ $(function() {
     socket.on('disconnect', function(msg) {
         $('#messages').append($('<li>').text(msg));
     })
-    socket.on('connect message', function(msg) {
+    socket.on('connect message', function(name) {
+        let msg = `Player ${name} has joined!`
         $('#messages').append($('<li>').text(msg));
-    }).on('countdown',function(a){
-        console.log(a);
-    }).on('game-over',function(){
-        window.location.href='/done';
+    }).on('game-over', function() {
+        window.location.href = '/';
+    }).on('home-page', function(id) {
+        if (socket.id === id) {
+            window.location.href = '/';
+        }
     })
 
 });

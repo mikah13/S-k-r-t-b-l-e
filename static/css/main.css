@@ -14,15 +14,20 @@ body {
 .canvas {
     display: inline;
     float: left;
-    width: 55vw;
-    height: 90vh;
-    margin-top: 5vh;
+    /* width: 55vw;
+    height: 90vh; */
+}
+
+.word {
+    width: 57vw;
 }
 
 canvas {
     background: white;
-    width: 55vw;
-    height: 70vh;
+    margin: 0 auto;
+    width: 100%;
+    max-width: 57vw;
+    height: 600px;
     /* width: 100%;
     height: 100%; */
     border: 5px solid black;
@@ -30,37 +35,41 @@ canvas {
 
 .chat {
     background: white;
-         overflow-y: auto;
+    padding: 0 0 0 0;
+    overflow-y: auto;
     height: 100vh;
     display: inline;
     float: right;
-    width: 40vw;
+    /* width: 40vw; */
+}
+
+#inputChat {
+    height: 55px;
+    display: inline-block;
+}
+
+.form-chat {
+    padding: 0 0 0 0;
 }
 
 form {
-    background: #000;
     padding: 3px;
     position: fixed;
     bottom: 0;
-    width: 100%;
-}
-
-form input {
-    border: 0;
-    padding: 10px;
-    width: 30%;
-    margin-right: .5%;
 }
 
 form button {
-    width: 9%;
-    background: rgb(130, 224, 255);
-    border: none;
-    padding: 10px;
+    display: inline-block;
+    width: 95%;
+    height: 55px;
+
+}
+.btn{
+        border-radius: 0px;
 }
 
 #messages {
-         background-color: white;
+    background-color: white;
     list-style-type: none;
     margin: 0;
     padding: 0;
@@ -73,57 +82,144 @@ form button {
 #messages li:nth-child(odd) {
     background: #eee;
 }
-
+.color{
+    padding-left: 80px;
+}
 .current-color {
+
     border: .5px solid black;
     width: 50px;
     height: 50px;
     background: black;
     display: inline-block;
 }
-.color-board ,.color-cell,.brush,.eraser,.xsmall,.small,.medium,.large,.clear{
+
+.color-board, .color-cell, .brush, .eraser, .xsmall, .small, .medium, .large, .clear {
     display: inline-block;
 }
+
 .color-board {
 
     width: 275px;
 }
 
 .color-cell {
-
     width: 25px;
     height: 25px;
 }
 
-#clear{
+#clear {
     height: 50px;
     width: 50px;
 }
 
-#xsmall,#small,#medium,#large{
+#xsmall, #small, #medium, #large {
     width: 10px;
     height: 10px;
     border-radius: 50%;
     background: black;
 }
 
-#small{
+#small {
     width: 15px;
     height: 15px;
 }
 
-#medium{
+#medium {
     width: 20px;
     height: 20px;
 }
-#large{
+
+#large {
     width: 25px;
     height: 25px;
 }
-.word{
+
+.word {
     padding-top: 10px;
     font-size: 20px;
     text-align: center;
     background: white;
     height: 40px;
+}
+
+h1 {
+    text-shadow: -4px 0 black, 0 4px black, 4px 0 black, 0 -4px black;
+    font-size: 40px;
+    text-align: center;
+    color: white;
+}
+
+.title-s {
+    color: red;
+}
+
+.title-k {
+    color: orange;
+}
+
+.title-r {
+    color: yellow;
+}
+
+.title-t {
+    color: green;
+}
+
+.title-b {
+    color: #38EDE2;
+}
+
+.title-l {
+    color: #25EEB8;
+}
+
+.title-e {
+    color: purple;
+}
+
+.title-e {
+    color: pink;
+}
+
+.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+}
+
+.leaderboard {
+    border: #F9AE56 6px solid;
+    background: white;
+    height: 50vh;
+}
+
+.leaderboard ul {
+    background-color: white;
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+
+.leaderboard li {
+    padding: 5px 10px;
+}
+
+.leaderboard li:nth-child(odd) {
+    background: #eee;
+}
+
+.tool {
+
+    display: inline;
 }

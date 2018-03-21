@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>Skrtble</title>
+    <link rel="stylesheet" href="static/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="static/css/login.css" />
+</head>
+
+<body>
+    <h1>
+        <span class="title-s">S</span>
+        <span class="title-k">k</span>
+        <span class="title-r">r</span>
+        <span class="title-t">t</span>
+        <span class="title-b">b</span>
+        <span class="title-l">l</span>
+        <span class="title-e">e</span>
+        <span>.</span>
+        <span>i</span>
+        <span>o</span>
+    </h1>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-4 col-lg-offset-4">
+                <div id="login">
+                    <h2>LOGIN HERE</h2>
+                    <form action='/game'>
+                        <input id="name" type="text" autocomplete="off" class="form-control" placeholder="Enter your name" maxlength="32">
+                        <button class="btn btn-success" ype='submit' id='done'>Play!</button>
+                    </form>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
+    <script src="/static/js/jquery-3.2.1.min.js"></script>
+    <script src="/static/js/signup.js"></script>
+</body>
+
+</html>

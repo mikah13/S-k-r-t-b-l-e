@@ -1,8 +1,9 @@
 $(function() {
     let socket = io();
-    let name;
     $("#done").on('click',function(){
-        name = $('#name').val();
+        let name = $('#name').val();
+        socket.emit('start-game',name);
+
     })
 
 });

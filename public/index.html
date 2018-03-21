@@ -12,65 +12,96 @@
 </head>
 
 <body>
-    <div class="canvas">
-    <div class="word">
-            <p id="word"></p>
-    </div>
-        <canvas id="canvas"></canvas>
-        <button id="next-turn">Next</button>
-        <div id="tools">
-            <div class="current-color">
+    <h1 class="noselect">
+        <span class="title-s">S</span>
+        <span class="title-k">k</span>
+        <span class="title-r">r</span>
+        <span class="title-t">t</span>
+        <span class="title-b">b</span>
+        <span class="title-l">l</span>
+        <span class="title-e">e</span>
+        <span>.</span>
+        <span>i</span>
+        <span>o</span>
+    </h1>
+    <div class="container-fluid noselect">
+        <div class="row">
+            <div class="leaderboard col-xs-2">
 
             </div>
-            <div class="color-board">
+            <div class="canvas">
+                <div class="word">
+                    <p id="word"></p>
+                </div>
+                <canvas id="canvas"></canvas>
 
-            </div>
-            <div class="brush">
-                <img id="brush" src="/static/images/pen.gif" />
+                <div id="tools">
+                    <div class="row">
+                        <div class="col-xs-6 color">
+                            <div class="current-color">
 
-            </div>
-            <div class="eraser">
-                <img id="eraser" src="/static/images/rubber.gif" />
+                            </div>
+                            <div class="color-board">
 
-            </div>
+                            </div>
+                        </div>
+                        <div class="col-xs-6">
+                            <div class="tool">
+                                <div class="brush">
+                                    <img id="brush" src="/static/images/pen.gif" />
 
-            <div class="xsmall">
-                <div id="xsmall"></div>
-            </div>
-            <div class="small">
-                <div id="small">
+                                </div>
+                                <div class="eraser">
+                                    <img id="eraser" src="/static/images/rubber.gif" />
+
+                                </div>
+                                <div class="xsmall">
+                                    <div id="xsmall"></div>
+                                </div>
+                                <div class="small">
+                                    <div id="small">
+
+                                    </div>
+                                </div>
+                                <div class="medium">
+                                    <div id="medium">
+
+                                    </div>
+                                </div>
+                                <div class="large">
+                                    <div id="large">
+
+                                    </div>
+                                </div>
+                                <div class="clear">
+                                    <img id="clear" src="/static/images/clear.gif" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                 </div>
-            </div>
-            <div class="medium">
-                <div id="medium">
 
+            </div>
+            <div id="chat" class="chat col-xs-3">
+                <ul id="messages"></ul>
+                <div class="input">
+                    <form class="form-chat">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="inputChat" placeholder="Guess the word" autofocus="">
+                            <span class="input-group-btn"><button id="find" class="btn btn-success" role="button">SEND</button>
+                        </span>
+                        </div>
                 </div>
-            </div>
-
-            <div class="large">
-                <div id="large">
-
-                </div>
-            </div>
-            <div class="clear">
-                <img id="clear" src="/static/images/clear.gif" />
+                </form>
             </div>
         </div>
-
-
     </div>
-    <div id="chat" class="chat">
-        <ul id="messages"></ul>
-        <form action="">
-            <input id="m" autocomplete="off" /><button id="submit">Send</button>
-        </form>
     </div>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.slim.js"></script>
 <script src="/static/js/jquery-3.2.1.min.js"></script>
 <script src="/static/js/game.js"></script>
-
 
 </html>
 

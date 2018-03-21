@@ -1,0 +1,74 @@
+body {
+    overflow-y: hidden;
+    background-image: url('../images/background.png');
+    padding: 5px 5px 5px 5px;
+    font: 13px Helvetica, Arial;
+}
+
+h1 {
+    text-shadow: -4px 0 black, 0 4px black, 4px 0 black, 0 -4px black;
+    font-size: 80px;
+    text-align: center;
+    color: white;
+}
+
+
+.title-s {
+    color: red;
+}
+
+.title-k {
+    color: orange;
+}
+
+.title-r {
+    color: yellow;
+}
+
+.title-t {
+    color: green;
+}
+
+.title-b {
+    color: #38EDE2;
+}
+
+.title-l {
+    color: #25EEB8;
+}
+
+.title-e {
+    color: purple;
+}
+
+.title-e {
+    color: pink;
+}
+
+form {
+    display: block;
+}
+
+#name {
+    height: 50px;
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+button {
+    height: 50px;
+    width: 100%;
+}
+
+#login {
+    margin-top: 15%;
+    border-radius: 5%;
+    padding: 20px 20px 30px 20px;
+    background: white;
+    width: 100%;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+}
