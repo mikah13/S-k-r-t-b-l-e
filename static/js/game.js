@@ -81,7 +81,6 @@ $(function() {
         socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
     }
     $('#canvas').mouseout(function(e) {
-
         paint = mouseDown === 1
             ? true
             : false;
@@ -106,7 +105,7 @@ $(function() {
         --mouseDown;
         paint = false;
     });
-    
+
     socket.on('next', function(id) {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
         if (socket.id === id) {
@@ -128,8 +127,10 @@ $(function() {
         }
     })
     socket.on('draw', function(players) {
+
         for (let player in players) {
             context.lineJoin = "round";
+                    console.log(players[player].clickX.length);
             for (let i = 0; i < players[player].clickX.length; i++) {
                 context.beginPath();
                 if (players[player].clickDrag[i] && i) {
