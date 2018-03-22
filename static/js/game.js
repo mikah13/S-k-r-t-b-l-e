@@ -13,6 +13,7 @@ $(function() {
     let curLineWidth = 5;
     let paint;
     let mouseDown = 0;
+    let lastEmit = $.now();
     const COLOR_ARRAY = [
         '#FFFFFF',
         '#B1B2B8',
@@ -78,7 +79,11 @@ $(function() {
     })
     socket.emit('new player');
     function addClick(x, y, dragging) {
-        socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
+        if ($.now() - lastEmit > 10) {
+            socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
+
+        }
+        lastEmit = $.now();
     }
     $('#canvas').mouseout(function(e) {
         paint = mouseDown === 1
@@ -130,7 +135,6 @@ $(function() {
 
         for (let player in players) {
             context.lineJoin = "round";
-                    console.log(players[player].clickX.length);
             for (let i = 0; i < players[player].clickX.length; i++) {
                 context.beginPath();
                 if (players[player].clickDrag[i] && i) {

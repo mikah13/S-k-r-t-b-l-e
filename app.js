@@ -146,7 +146,7 @@ io.on('connection', function(socket) {
     })
 
     socket.on('redraw', function() {
-        io.emit('draw', players)
+        io.emit('draw', players);
     })
 
     socket.on('reset', function() {
