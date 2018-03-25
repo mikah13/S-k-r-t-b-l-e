@@ -8,12 +8,16 @@ $(function() {
         : w;
     let context = canvas.getContext('2d');
     context.lineWidth = 5;
+    context.lineJoin = "round";
     let curColor = "black";
     let prevColor;
     let curLineWidth = 5;
     let paint;
     let mouseDown = 0;
     let lastEmit = $.now();
+    var clients = {};
+    var cursors = {};
+    var prev = {};
     const COLOR_ARRAY = [
         '#FFFFFF',
         '#B1B2B8',
@@ -78,31 +82,46 @@ $(function() {
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     })
     socket.emit('new player');
-    function addClick(x, y, dragging) {
-        if ($.now() - lastEmit > 10) {
-            socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
-
-        }
-        lastEmit = $.now();
-    }
+    // function addClick(x, y, dragging) {
+    //      if ($.now() - lastEmit > 10) {
+    //     socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
+    //
+    // }
     $('#canvas').mouseout(function(e) {
         paint = mouseDown === 1
             ? true
             : false;
     })
     $('#canvas').mousedown(function(e) {
-        ++mouseDown;
-        context.beginPath();
-        let mouseX = e.pageX - this.offsetLeft;
-        let mouseY = e.pageY - this.offsetTop;
+        // ++mouseDown;
+        // context.beginPath();
+        // let mouseX = e.pageX - this.offsetLeft;
+        // let mouseY = e.pageY - this.offsetTop;
         paint = true;
-        addClick(mouseX, mouseY);
-        socket.emit('redraw');
+        // addClick(mouseX, mouseY);
+        // socket.emit('redraw');
+        prev.x = e.pageX;
+        prev.y = e.pageY;
+
     });
     $('#canvas').mousemove(function(e) {
         if (paint) {
-            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-            socket.emit('redraw');
+            let locX = prev.x - this.offsetLeft;
+            let locY = prev.y - this.offsetTop;
+            let destX = e.pageX - this.offsetLeft;
+            let destY = e.pageY - this.offsetTop;
+            drawLine(prev.x - this.offsetLeft, prev.y - this.offsetTop, e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
+            prev.x = e.pageX;
+            prev.y = e.pageY;
+            socket.emit('redraw', {
+                locX: locX,
+                locY: locY,
+                destX: destX,
+                destY: destY,
+                id: socket.id
+            });
+            // addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+            // socket.emit('redraw');
         }
     });
 
@@ -131,26 +150,37 @@ $(function() {
             $("#word").text(hidden);
         }
     })
-    socket.on('draw', function(players) {
-
-        for (let player in players) {
-            context.lineJoin = "round";
-            for (let i = 0; i < players[player].clickX.length; i++) {
-                context.beginPath();
-                if (players[player].clickDrag[i] && i) {
-                    context.moveTo(players[player].clickX[i - 1], players[player].clickY[i - 1]);
-                } else {
-                    context.moveTo(players[player].clickX[i] - 1, players[player].clickY[i]);
-                }
-                context.lineTo(players[player].clickX[i], players[player].clickY[i]);
-                context.closePath();
-                context.lineWidth = players[player].lineWidth[i];
-                context.strokeStyle = players[player].clickColor[i];
-                context.stroke();
-            }
+    socket.on('draw', function(data) {
+        if (socket.id !== data.id) {
+            drawLine(data.locX, data.locY, data.destX, data.destY);
         }
+        // for (let player in players) {
+        //     context.lineJoin = "round";
+        //     for (let i = 0; i < players[player].clickX.length; i++) {
+        //         context.beginPath();
+        //         if (players[player].clickDrag[i] && i) {
+        //             context.moveTo(players[player].clickX[i - 1], players[player].clickY[i - 1]);
+        //         } else {
+        //             context.moveTo(players[player].clickX[i] - 1, players[player].clickY[i]);
+        //         }
+        //         context.lineTo(players[player].clickX[i], players[player].clickY[i]);
+        //         context.closePath();
+        //         context.lineWidth = players[player].lineWidth[i];
+        //         context.strokeStyle = players[player].clickColor[i];
+        //         context.stroke();
+        //     }
+        // }
     })
 
+    function drawLine(fromx, fromy, tox, toy) {
+
+        context.beginPath();
+        context.moveTo(fromx, fromy);
+        context.lineTo(tox, toy);
+        context.stroke();
+        context.closePath();
+
+    }
     // Notification and chat
 
     $('form').submit(function() {
