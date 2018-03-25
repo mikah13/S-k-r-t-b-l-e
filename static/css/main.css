@@ -36,7 +36,7 @@ canvas {
 }
 
 .chat {
-
+    max-width: 400px;
     width: calc(80% - 805px);
     background: white;
     padding: 0 0 0 0;
