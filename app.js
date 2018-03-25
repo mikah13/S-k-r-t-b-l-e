@@ -147,7 +147,7 @@ io.on('connection', function(socket) {
 
     socket.on('redraw', function(data) {
 
-        io.emit('draw', data);
+        socket.broadcast.emit('draw', data);
     })
 
     socket.on('reset', function() {

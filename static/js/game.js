@@ -113,13 +113,16 @@ $(function() {
             drawLine(prev.x - this.offsetLeft, prev.y - this.offsetTop, e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
             prev.x = e.pageX;
             prev.y = e.pageY;
-            socket.emit('redraw', {
-                locX: locX,
-                locY: locY,
-                destX: destX,
-                destY: destY,
-                id: socket.id
-            });
+            if ($.now() - lastEmit > 10) {
+                socket.emit('redraw', {
+                    locX: locX,
+                    locY: locY,
+                    destX: destX,
+                    destY: destY,
+                    id: socket.id
+                });
+                lastEmit = $.now();
+            }
             // addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
             // socket.emit('redraw');
         }
@@ -152,7 +155,7 @@ $(function() {
     })
     socket.on('draw', function(data) {
         if (socket.id !== data.id) {
-            drawLine(data.locX, data.locY, data.destX, data.destY);
+            drawLine(data.locX, data.locY, data.destX, data.destY,curColor);
         }
         // for (let player in players) {
         //     context.lineJoin = "round";
@@ -172,12 +175,13 @@ $(function() {
         // }
     })
 
-    function drawLine(fromx, fromy, tox, toy) {
+    function drawLine(fromx, fromy, tox, toy,color) {
 
         context.beginPath();
         context.moveTo(fromx, fromy);
         context.lineTo(tox, toy);
         context.stroke();
+             context.strokeStyle = color;
         context.closePath();
 
     }

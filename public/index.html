@@ -24,76 +24,78 @@
         <span>i</span>
         <span>o</span>
     </h1>
-    <div class="container-fluid noselect">
+    <div class="container-fluid noselect  center-block">
         <div class="row">
-            <div class="leaderboard col-xs-2">
+            <div class="content">
+                <div class="leaderboard col-xs-2 ">
 
-            </div>
-            <div class="canvas">
-                <div class="word">
-                    <p id="word"></p>
                 </div>
-                <canvas id="canvas"></canvas>
+                <div class="canvas">
+                    <div class="word">
+                        <p id="word"></p>
+                    </div>
+                    <canvas id="canvas"></canvas>
 
-                <div id="tools">
-                    <div class="row">
-                        <div class="col-xs-6 color">
-                            <div class="current-color">
+                    <div id="tools">
+                        <div class="row">
+                            <div class="col-xs-6 color">
+                                <div class="current-color">
 
+                                </div>
+                                <div class="color-board">
+
+                                </div>
                             </div>
-                            <div class="color-board">
+                            <div class="col-xs-6">
+                                <div class="tool">
+                                    <div class="brush">
+                                        <img id="brush" src="/static/images/pen.gif" />
 
+                                    </div>
+                                    <div class="eraser">
+                                        <img id="eraser" src="/static/images/rubber.gif" />
+
+                                    </div>
+                                    <div class="xsmall">
+                                        <div id="xsmall"></div>
+                                    </div>
+                                    <div class="small">
+                                        <div id="small">
+
+                                        </div>
+                                    </div>
+                                    <div class="medium">
+                                        <div id="medium">
+
+                                        </div>
+                                    </div>
+                                    <div class="large">
+                                        <div id="large">
+
+                                        </div>
+                                    </div>
+                                    <div class="clear">
+                                        <img id="clear" src="/static/images/clear.gif" />
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                        <div class="col-xs-6">
-                            <div class="tool">
-                                <div class="brush">
-                                    <img id="brush" src="/static/images/pen.gif" />
 
-                                </div>
-                                <div class="eraser">
-                                    <img id="eraser" src="/static/images/rubber.gif" />
-
-                                </div>
-                                <div class="xsmall">
-                                    <div id="xsmall"></div>
-                                </div>
-                                <div class="small">
-                                    <div id="small">
-
-                                    </div>
-                                </div>
-                                <div class="medium">
-                                    <div id="medium">
-
-                                    </div>
-                                </div>
-                                <div class="large">
-                                    <div id="large">
-
-                                    </div>
-                                </div>
-                                <div class="clear">
-                                    <img id="clear" src="/static/images/clear.gif" />
-                                </div>
-                            </div>
-                        </div>
                     </div>
 
                 </div>
-
-            </div>
-            <div id="chat" class="chat col-xs-3">
-                <ul id="messages"></ul>
-                <div class="input">
-                    <form class="form-chat">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="inputChat" placeholder="Guess the word" autofocus="">
-                            <span class="input-group-btn"><button id="find" class="btn btn-success" role="button">SEND</button>
-                        </span>
-                        </div>
+                <div id="chat" class="chat ">
+                    <ul id="messages"></ul>
+                    <div class="input">
+                        <form class="form-chat">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="inputChat" placeholder="Guess the word" autofocus="">
+                                <span class="input-group-btn"><button id="find" class="btn btn-success" role="button">SEND</button>
+                            </span>
+                            </div>
+                    </div>
+                    </form>
                 </div>
-                </form>
             </div>
         </div>
     </div>
