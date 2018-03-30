@@ -8,16 +8,19 @@ $(function() {
         : w;
     let context = canvas.getContext('2d');
     context.lineWidth = 5;
-    context.lineJoin = "round";
     let curColor = "black";
     let prevColor;
     let curLineWidth = 5;
     let paint;
     let mouseDown = 0;
-    let lastEmit = $.now();
-    var clients = {};
-    var cursors = {};
-    var prev = {};
+    let data = {
+        id: socket.id,
+        clickX: new Array(),
+        clickY: new Array(),
+        clickDrag: new Array(),
+        clickColor: new Array(),
+        lineWidth: new Array()
+    }
     const COLOR_ARRAY = [
         '#FFFFFF',
         '#B1B2B8',
@@ -69,9 +72,10 @@ $(function() {
         curLineWidth = 25;
     })
     $("#clear").on('click', function() {
-        socket.emit('reset');
+        socket.emit('reset',socket.id);
     })
     socket.on('add new player', function(players) {
+        data.id = socket.id
         let text = '<ul>';
         for (let val in players) {
             text += `<li>${players[val].name}</li>`;
@@ -79,52 +83,42 @@ $(function() {
         $(".leaderboard").html(text + '</ul>');
     })
     socket.on('reset all', function() {
+        data.clickX = new Array();
+        data.clickY = new Array();
+        data.clickDrag = new Array();
+        data.clickColor = new Array();
+        data.lineWidth = new Array();
         context.clearRect(0, 0, context.canvas.width, context.canvas.height);
     })
-    socket.emit('new player');
-    // function addClick(x, y, dragging) {
-    //      if ($.now() - lastEmit > 10) {
-    //     socket.emit('add coord', x, y, dragging, curColor, curLineWidth);
-    //
-    // }
+    socket.emit('start game', data);
+    function addClick(x, y, dragging) {
+        data.clickX.push(x);
+        data.clickY.push(y);
+        data.clickDrag.push(dragging);
+        data.clickColor.push(curColor);
+        data.lineWidth.push(curLineWidth);
+    }
     $('#canvas').mouseout(function(e) {
+
         paint = mouseDown === 1
             ? true
             : false;
     })
     $('#canvas').mousedown(function(e) {
-        // ++mouseDown;
-        // context.beginPath();
-        // let mouseX = e.pageX - this.offsetLeft;
-        // let mouseY = e.pageY - this.offsetTop;
+        ++mouseDown;
+        context.beginPath();
+        let mouseX = e.pageX - this.offsetLeft;
+        let mouseY = e.pageY - this.offsetTop;
         paint = true;
-        // addClick(mouseX, mouseY);
-        // socket.emit('redraw');
-        prev.x = e.pageX;
-        prev.y = e.pageY;
+        addClick(mouseX, mouseY);
 
+        socket.emit('redraw', data);
     });
     $('#canvas').mousemove(function(e) {
         if (paint) {
-            let locX = prev.x - this.offsetLeft;
-            let locY = prev.y - this.offsetTop;
-            let destX = e.pageX - this.offsetLeft;
-            let destY = e.pageY - this.offsetTop;
-            drawLine(prev.x - this.offsetLeft, prev.y - this.offsetTop, e.pageX - this.offsetLeft, e.pageY - this.offsetTop);
-            prev.x = e.pageX;
-            prev.y = e.pageY;
-            if ($.now() - lastEmit > 10) {
-                socket.emit('redraw', {
-                    locX: locX,
-                    locY: locY,
-                    destX: destX,
-                    destY: destY,
-                    id: socket.id
-                });
-                lastEmit = $.now();
-            }
-            // addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
-            // socket.emit('redraw');
+            addClick(e.pageX - this.offsetLeft, e.pageY - this.offsetTop, true);
+
+            socket.emit('redraw', data);
         }
     });
 
@@ -139,10 +133,7 @@ $(function() {
             socket.emit('next-turn');
         }
     })
-    socket.on('clear canvas', function() {
-        context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
-    })
     socket.on('show word', function(args) {
 
         if (socket.id === args.player) {
@@ -154,37 +145,24 @@ $(function() {
         }
     })
     socket.on('draw', function(data) {
-        if (socket.id !== data.id) {
-            drawLine(data.locX, data.locY, data.destX, data.destY,curColor);
+
+        context.lineJoin = "round";
+        for (let i = 0; i < data.clickX.length; i++) {
+            context.beginPath();
+            if (data.clickDrag[i] && i) {
+                context.moveTo(data.clickX[i - 1], data.clickY[i - 1]);
+            } else {
+                context.moveTo(data.clickX[i] - 1, data.clickY[i]);
+            }
+            context.lineTo(data.clickX[i], data.clickY[i]);
+            context.closePath();
+            context.lineWidth = data.lineWidth[i];
+            context.strokeStyle = data.clickColor[i];
+            context.stroke();
         }
-        // for (let player in players) {
-        //     context.lineJoin = "round";
-        //     for (let i = 0; i < players[player].clickX.length; i++) {
-        //         context.beginPath();
-        //         if (players[player].clickDrag[i] && i) {
-        //             context.moveTo(players[player].clickX[i - 1], players[player].clickY[i - 1]);
-        //         } else {
-        //             context.moveTo(players[player].clickX[i] - 1, players[player].clickY[i]);
-        //         }
-        //         context.lineTo(players[player].clickX[i], players[player].clickY[i]);
-        //         context.closePath();
-        //         context.lineWidth = players[player].lineWidth[i];
-        //         context.strokeStyle = players[player].clickColor[i];
-        //         context.stroke();
-        //     }
-        // }
+
     })
 
-    function drawLine(fromx, fromy, tox, toy,color) {
-
-        context.beginPath();
-        context.moveTo(fromx, fromy);
-        context.lineTo(tox, toy);
-        context.stroke();
-             context.strokeStyle = color;
-        context.closePath();
-
-    }
     // Notification and chat
 
     $('form').submit(function() {

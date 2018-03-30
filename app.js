@@ -23,13 +23,13 @@ app.get('/over', function(request, response) {
 });
 
 function getId(obj, turn) {
-    let target;
+
     for (let val in obj) {
         if (obj[val].id === turn) {
-            target = val;
+            return val;
         }
     }
-    return target;
+    return null;
 }
 function getPlayersLength(obj) {
     let count = 0;
@@ -48,12 +48,25 @@ function resetPlayer(player, word) {
 }
 function checkGuessed(players, turn, socket) {
     for (let val in players) {
+
         if (players[val].guess === false && players[socket.id].id != turn) {
+
             return false;
         }
     }
     return true;
 }
+function getDrawing(players, turn) {
+    for (let val in players) {
+
+        if (players[val].id === turn) {
+
+            return players[val].data;
+        }
+    }
+    return null;
+}
+const MAX = 10;
 let words = ["ability", "achieve", "acquire", "actions", "actress"];
 let players = {};
 let number = 0;
@@ -62,52 +75,52 @@ let name;
 let curWord = words[Math.floor(Math.random() * words.length)];
 
 io.on('connection', function(socket) {
-    socket.on('start-game', function(n) {
-
+    socket.on('new player', function(n) {
         if (n === null || n.trim() === '') {
             n = words[Math.floor(Math.random() * words.length)];
         }
         name = n;
 
     });
-
-    socket.on('new player', function() {
-        players[socket.id] = {
-            name: name,
-            clickX: new Array(),
-            clickY: new Array(),
-            clickDrag: new Array(),
-            clickColor: new Array(),
-            lineWidth: new Array(),
-            id: number,
-            guess: false
+    socket.on('start game', function(data) {
+        if (number <= MAX) {
+            players[socket.id] = {
+                name: name,
+                data: data,
+                id: number,
+                guess: false
+            }
+            number++;
+        } else {
+            io.emit('main menu', socket.id)
         }
-        number++;
         io.emit('show word', {
             word: curWord,
             player: getId(players, turn)
         });
-        io.emit('draw', players);
+
+        io.emit('draw', getDrawing(players, turn));
         io.emit('connect message', players[socket.id].name);
         io.emit('add new player', players);
     })
 
     socket.on('next-turn', function() {
         for (let val in players) {
-            players[val].clickX = new Array();
-            players[val].clickY = new Array();
-            players[val].clickDrag = new Array();
-            players[val].clickColor = new Array();
-            players[val].lineWidth = new Array();
-            players[val].word = '';
-            players[val].guess = false;
+            // players[val].clickX = new Array();
+            // players[val].clickY = new Array();
+            // players[val].clickDrag = new Array();
+            // players[val].clickColor = new Array();
+            // players[val].lineWidth = new Array();
+            // players[val].word = '';
+            // players[val].guess = false;
         }
 
         turn++;
         if (turn >= number) {
             turn = 0;
         }
-        io.emit('clear canvas');
+        io.emit('reset all');
+
         curWord = words[Math.floor(Math.random() * words.length)];
 
         io.emit('show word', {
@@ -132,31 +145,36 @@ io.on('connection', function(socket) {
 
     })
 
-    socket.on('add coord', function(x, y, z, t, u) {
-        if (players[socket.id] !== undefined) {
-            let player = players[socket.id];
-            if (player.id === turn) {
-                player.clickX.push(x);
-                player.clickY.push(y);
-                player.clickDrag.push(z);
-                player.clickColor.push(t);
-                player.lineWidth.push(u);
-            }
-        }
-    })
+    // socket.on('add coord', function(x, y, z, t, u) {
+    //     if (players[socket.id] !== undefined) {
+    //         let player = players[socket.id];
+    //         if (player.id === turn) {
+    //             player.clickX.push(x);
+    //             player.clickY.push(y);
+    //             player.clickDrag.push(z);
+    //             player.clickColor.push(t);
+    //             player.lineWidth.push(u);
+    //         }
+    //     }
+    // })
 
     socket.on('redraw', function(data) {
 
-        socket.broadcast.emit('draw', data);
+        if (data.id === getId(players, turn)) {
+            players[data.id].data = data;
+            io.emit('draw', data);
+        }
     })
 
-    socket.on('reset', function() {
-        players[socket.id].clickX = new Array();
-        players[socket.id].clickY = new Array();
-        players[socket.id].clickDrag = new Array();
-        players[socket.id].clickColor = new Array();
-        players[socket.id].lineWidth = new Array();
-        io.emit('reset all');
+    socket.on('reset', function(id) {
+        // players[socket.id].clickX = new Array();
+        // players[socket.id].clickY = new Array();
+        // players[socket.id].clickDrag = new Array();
+        // players[socket.id].clickColor = new Array();
+        // players[socket.id].lineWidth = new Array();
+        if (players[id].id === turn) {
+            io.emit('reset all');
+        }
     })
     socket.on('disconnect', function() {
         if (players[socket.id] !== undefined) {
@@ -175,7 +193,7 @@ io.on('connection', function(socket) {
             }
             let msg = `Player ${players[socket.id].name} has left`;
             io.emit('disconnect', msg);
-            io.emit('home-page',socket.id);
+            io.emit('home-page', socket.id);
             delete players[socket.id];
             number--;
             if (number < 2) {
@@ -186,21 +204,20 @@ io.on('connection', function(socket) {
 
     socket.on('chat message', function(msg) {
         if (msg.trim() !== '') {
-            if (msg === 'transport close') {
-                io.emit('game-over');
-            }
             if (!players[socket.id].guess && players[socket.id].id != turn) {
+
                 if (msg.trim().toLowerCase() === curWord) {
                     players[socket.id].guess = true;
                     io.emit('chat message', players[socket.id].name + " guessed the word!");
                 } else {
                     io.emit('chat message', players[socket.id].name + ": " + msg);
                 }
+                if (checkGuessed(players, turn, socket) === true) {
+
+                    io.emit('next', socket.id);
+                }
             }
 
-            if (checkGuessed(players, turn, socket) === true) {
-                io.emit('next', socket.id);
-            }
         }
     });
 
