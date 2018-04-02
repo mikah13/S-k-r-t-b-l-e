@@ -161,7 +161,7 @@ io.on('connection', function(socket) {
     socket.on('redraw', function(data) {
 
         if (data.id === getId(players, turn)) {
-            players[data.id].data = data;
+
             io.emit('draw', data);
         }
     })
